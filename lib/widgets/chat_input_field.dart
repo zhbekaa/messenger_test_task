@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:messenger_test_task/domain/services/chat_service.dart';
 
 class ChatInputField extends StatefulWidget {
-  const ChatInputField({super.key});
+  const ChatInputField({
+    Key? key,
+    required this.receiverId,
+    required this.onMessageSubmitted,
+  }) : super(key: key);
+
+  final String receiverId;
+  final ValueChanged<String> onMessageSubmitted;
 
   @override
   State<StatefulWidget> createState() {
@@ -13,6 +21,14 @@ class ChatInputField extends StatefulWidget {
 class _ChatInputFieldState extends State<ChatInputField> {
   final TextEditingController _controller = TextEditingController();
   final ValueNotifier<bool> _isTextEmpty = ValueNotifier(true);
+  final _chatService = ChatService();
+
+  void sendMessage(String message) async {
+    if (message.isNotEmpty) {
+      await _chatService.sendMessage(widget.receiverId, message);
+      widget.onMessageSubmitted(message); // Notify parent widget
+    }
+  }
 
   @override
   void initState() {
@@ -89,6 +105,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
                   onPressed: () {
                     if (_controller.text.isNotEmpty) {
                       debugPrint("Sending message: ${_controller.text}");
+                      sendMessage(_controller.text);
                       _controller.clear(); // Clear text field after sending message
                     }
                   },

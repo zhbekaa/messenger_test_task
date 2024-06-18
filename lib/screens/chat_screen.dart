@@ -5,44 +5,63 @@ import 'package:messenger_test_task/widgets/chat_bubble.dart';
 import 'package:messenger_test_task/widgets/chat_input_field.dart';
 import 'package:messenger_test_task/widgets/text_divider.dart';
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   final Chat chat;
 
   const ChatScreen({Key? key, required this.chat}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    String getFormattedDate(DateTime messageDate) {
-      DateTime now = DateTime.now();
+  ChatScreenState createState() => ChatScreenState();
+}
 
-      // Check if the message was sent today
-      if (now.year == messageDate.year &&
-          now.month == messageDate.month &&
-          now.day == messageDate.day) {
-        return 'Сегодня';
-      }
+class ChatScreenState extends State<ChatScreen> {
+  late Chat _chat;
 
-      // Check if the message was sent yesterday
-      DateTime yesterday = now.subtract(const Duration(days: 1));
-      if (yesterday.year == messageDate.year &&
-          yesterday.month == messageDate.month &&
-          yesterday.day == messageDate.day) {
-        return 'Вчера';
-      }
+  @override
+  void initState() {
+    super.initState();
+    _chat = widget.chat;
+  }
 
-      // Otherwise, format the date normally
-      return DateFormat('dd.MM.yy').format(messageDate);
+  void _addMessage(ChatMessage message) {
+    setState(() {
+      _chat.messages.add(message);
+    });
+  }
+
+  String getFormattedDate(DateTime messageDate) {
+    DateTime now = DateTime.now();
+
+    // Check if the message was sent today
+    if (now.year == messageDate.year &&
+        now.month == messageDate.month &&
+        now.day == messageDate.day) {
+      return 'Сегодня';
     }
 
+    // Check if the message was sent yesterday
+    DateTime yesterday = now.subtract(const Duration(days: 1));
+    if (yesterday.year == messageDate.year &&
+        yesterday.month == messageDate.month &&
+        yesterday.day == messageDate.day) {
+      return 'Вчера';
+    }
+
+    // Otherwise, format the date normally
+    return DateFormat('dd.MM.yy').format(messageDate);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: ListTile(
           contentPadding: EdgeInsets.zero,
           leading: CircleAvatar(
-            child: Text(chat.userName[0]),
+            child: Text(_chat.userName[0]),
           ),
           title: Text(
-            chat.userName,
+            _chat.userName,
             style: const TextStyle(color: Colors.black),
           ),
         ),
@@ -52,9 +71,9 @@ class ChatScreen extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(8),
-              itemCount: chat.messages.length,
+              itemCount: _chat.messages.length,
               itemBuilder: (context, index) {
-                final message = chat.messages[index];
+                final message = _chat.messages[index];
                 DateTime messageDate = message.timestamp;
                 String formattedDate = getFormattedDate(messageDate);
 
@@ -62,7 +81,7 @@ class ChatScreen extends StatelessWidget {
                 bool showDivider = true;
                 if (index > 0) {
                   DateTime previousMessageDate =
-                      chat.messages[index - 1].timestamp;
+                      _chat.messages[index - 1].timestamp;
                   if (messageDate.year == previousMessageDate.year &&
                       messageDate.month == previousMessageDate.month &&
                       messageDate.day == previousMessageDate.day) {
@@ -80,8 +99,9 @@ class ChatScreen extends StatelessWidget {
                 messageWidgets.add(ChatBubble(message: message));
 
                 // Add a SizedBox for spacing between messages
-                if (index < chat.messages.length - 1) {
-                  messageWidgets.add(const SizedBox(height: 10)); // Adjust the height as needed
+                if (index < _chat.messages.length - 1) {
+                  messageWidgets.add(const SizedBox(
+                      height: 10)); // Adjust the height as needed
                 }
 
                 return Column(
@@ -91,7 +111,17 @@ class ChatScreen extends StatelessWidget {
               },
             ),
           ),
-          const ChatInputField(),
+          ChatInputField(
+            receiverId: _chat.userName,
+            onMessageSubmitted: (text) {
+              final newMessage = ChatMessage(
+                text: text,
+                isSentByMe: true,
+                timestamp: DateTime.now(),
+              );
+              _addMessage(newMessage);
+            },
+          ),
         ],
       ),
     );
