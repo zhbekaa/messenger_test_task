@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../domain/models/chat_models.dart';
 import '../widgets/chat_preview.dart';
 
@@ -6,33 +7,95 @@ import '../widgets/chat_preview.dart';
 class ChatListScreen extends StatelessWidget {
   final List<Chat> chats = [
     Chat(
-      userName: "Alice",
+      userName: "Алиса",
       messages: [
         ChatMessage(
-          text: "Hello!",
+          text: "Привет!",
           isSentByMe: true,
           timestamp: DateTime.now().subtract(const Duration(minutes: 1)),
         ),
         ChatMessage(
-          text: "Hi, how are you?",
+          text: "Привет, как дела?",
           isSentByMe: false,
           timestamp: DateTime.now(),
         ),
       ],
     ),
     Chat(
-      userName: "Bob",
+      userName: "Боб",
       messages: [
         ChatMessage(
           text:
-              "Are we still on for today? Are we still on for todayAre we still on for todayAre we still on for todayAre we still on for todayAre we still on for todayAre we still on for todayAre we still on for today",
+              "Мы еще встречаемся сегодня? Мы еще встречаемся сегодня? Мы еще встречаемся сегодня? Мы еще встречаемся сегодня? Мы еще встречаемся сегодня? Мы еще встречаемся сегодня? Мы еще встречаемся сегодня? Мы еще встречаемся сегодня?",
           isSentByMe: true,
           timestamp: DateTime.now().subtract(const Duration(minutes: 30)),
         ),
         ChatMessage(
-          text: "Yes, see you at 5!",
+          text: "Да, увидимся в 5!",
           isSentByMe: false,
           timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
+        ),
+      ],
+    ),
+    Chat(
+      userName: "Кэрол",
+      messages: [
+        ChatMessage(
+          text: "Привет!",
+          isSentByMe: true,
+          timestamp: DateTime.now().subtract(const Duration(hours: 1)),
+        ),
+        ChatMessage(
+          text: "Привет Кэрол, как прошел день?",
+          isSentByMe: false,
+          timestamp: DateTime.now().subtract(const Duration(minutes: 50)),
+        ),
+        ChatMessage(
+          text: "Все отлично, спасибо!",
+          isSentByMe: true,
+          timestamp: DateTime.now().subtract(const Duration(minutes: 45)),
+        ),
+      ],
+    ),
+    Chat(
+      userName: "Виктор власов",
+      messages: [
+        ChatMessage(
+            text: "Сделай мне кофе пожалуйста!",
+            isSentByMe: true,
+            timestamp:
+                DateFormat('dd-MM-yyyy HH:mm').parse('27-01-2023 21:44')),
+        ChatMessage(
+            text: "Хорошо",
+            isSentByMe: false,
+            timestamp:
+                DateFormat('dd-MM-yyyy HH:mm').parse('27-01-2023 21:44')),
+        ChatMessage(
+          text: "Уже сделал?",
+          isSentByMe: true,
+          timestamp: DateTime.now().subtract(const Duration(minutes: 40)),
+        ),
+      ],
+    ),
+    Chat(
+      userName: "Дэвид",
+      messages: [
+        ChatMessage(
+          text: "Привет Дэвид, ты видел новый фильм?",
+          isSentByMe: false,
+          timestamp: DateTime.now().subtract(const Duration(hours: 2)),
+        ),
+        ChatMessage(
+          text: "Еще нет, он хороший?",
+          isSentByMe: true,
+          timestamp:
+              DateTime.now().subtract(const Duration(hours: 1, minutes: 55)),
+        ),
+        ChatMessage(
+          text: "Да, он очень хороший!",
+          isSentByMe: false,
+          timestamp:
+              DateTime.now().subtract(const Duration(hours: 1, minutes: 50)),
         ),
       ],
     ),
@@ -48,7 +111,9 @@ class ChatListScreen extends StatelessWidget {
 
           title: Text(
             'Чаты',
-            style: TextStyle(color: Colors.black, fontSize: 32), // Ensure text color is white
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 32), // Ensure text color is white
           ),
         ),
       ),
@@ -56,13 +121,9 @@ class ChatListScreen extends StatelessWidget {
         itemCount: chats.length,
         itemBuilder: (context, index) {
           final chat = chats[index];
-          return ChatPreview(chat: chat);
+          return Column(children: [ChatPreview(chat: chat), const Divider()]);
         },
       ),
     );
   }
 }
-
-void main() => runApp(MaterialApp(
-      home: ChatListScreen(),
-    ));

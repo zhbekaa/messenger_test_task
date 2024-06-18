@@ -12,7 +12,27 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<DateTime> messageDates = [];
+    String getFormattedDate(DateTime messageDate) {
+      DateTime now = DateTime.now();
+
+      // Check if the message was sent today
+      if (now.year == messageDate.year &&
+          now.month == messageDate.month &&
+          now.day == messageDate.day) {
+        return 'Сегодня';
+      }
+
+      // Check if the message was sent yesterday
+      DateTime yesterday = now.subtract(const Duration(days: 1));
+      if (yesterday.year == messageDate.year &&
+          yesterday.month == messageDate.month &&
+          yesterday.day == messageDate.day) {
+        return 'Вчера';
+      }
+
+      // Otherwise, format the date normally
+      return DateFormat('dd.MM.yy').format(messageDate);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -36,13 +56,13 @@ class ChatScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final message = chat.messages[index];
                 DateTime messageDate = message.timestamp;
-                debugPrint(messageDate.toString());
-                String formattedDate = DateFormat('dd.MM.yy').format(messageDate);
+                String formattedDate = getFormattedDate(messageDate);
 
                 // Check if this message's date is different from the previous one
                 bool showDivider = true;
                 if (index > 0) {
-                  DateTime previousMessageDate = chat.messages[index - 1].timestamp;
+                  DateTime previousMessageDate =
+                      chat.messages[index - 1].timestamp;
                   if (messageDate.year == previousMessageDate.year &&
                       messageDate.month == previousMessageDate.month &&
                       messageDate.day == previousMessageDate.day) {
@@ -58,6 +78,11 @@ class ChatScreen extends StatelessWidget {
 
                 // Add the ChatBubble for the current message
                 messageWidgets.add(ChatBubble(message: message));
+
+                // Add a SizedBox for spacing between messages
+                if (index < chat.messages.length - 1) {
+                  messageWidgets.add(const SizedBox(height: 10)); // Adjust the height as needed
+                }
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
