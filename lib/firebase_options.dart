@@ -83,4 +83,5 @@ class DefaultFirebaseOptions {
     authDomain: 'messenger-5d2c7.firebaseapp.com',
     storageBucket: 'messenger-5d2c7.appspot.com',
   );
+
 }

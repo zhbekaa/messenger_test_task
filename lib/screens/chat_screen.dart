@@ -4,11 +4,10 @@ import 'package:messenger_test_task/domain/models/chat_models.dart';
 import 'package:messenger_test_task/widgets/chat_bubble.dart';
 import 'package:messenger_test_task/widgets/chat_input_field.dart';
 import 'package:messenger_test_task/widgets/text_divider.dart';
-
 class ChatScreen extends StatefulWidget {
   final Chat chat;
 
-  const ChatScreen({Key? key, required this.chat}) : super(key: key);
+  const ChatScreen({super.key, required this.chat});
 
   @override
   ChatScreenState createState() => ChatScreenState();
@@ -100,8 +99,7 @@ class ChatScreenState extends State<ChatScreen> {
 
                 // Add a SizedBox for spacing between messages
                 if (index < _chat.messages.length - 1) {
-                  messageWidgets.add(const SizedBox(
-                      height: 10)); // Adjust the height as needed
+                  messageWidgets.add(const SizedBox(height: 10)); // Adjust the height as needed
                 }
 
                 return Column(
@@ -113,13 +111,8 @@ class ChatScreenState extends State<ChatScreen> {
           ),
           ChatInputField(
             receiverId: _chat.userName,
-            onMessageSubmitted: (text) {
-              final newMessage = ChatMessage(
-                text: text,
-                isSentByMe: true,
-                timestamp: DateTime.now(),
-              );
-              _addMessage(newMessage);
+            onMessageSubmitted: (message) {
+              _addMessage(message);
             },
           ),
         ],
